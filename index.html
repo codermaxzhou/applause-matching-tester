@@ -23,7 +23,7 @@
         <h1>Matching Tester</h1>
     </header>
     <nav>
-        <h2>Countries</h2>
+        <h3>Countries</h3>
         <ul>
             <li ng-repeat="country in countries">
                 <input type="checkbox" value="{{country.name}}" ng-model="country.selected">
@@ -34,7 +34,7 @@
                 <label>ALL</label>
             </li>
         </ul>
-        <h2>Devices</h2>
+        <h3>Devices</h3>
         <ul>
             <li ng-repeat="device in devices">
                 <input type="checkbox" value="{{device.description}}" ng-model="device.selected">
@@ -50,6 +50,7 @@
         </button>
     </nav>
 
+    <div style="overflow-x:auto;">
     <table>
         <tr>
             <th>Name</th>
@@ -62,6 +63,7 @@
             <td>{{tester.bugs}}</td>
         </tr>
     </table>
+    </div>
 
     <footer>Created by Yihao Zhou</footer>
 
