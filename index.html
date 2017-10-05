@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Matching Algorithm</title>
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!-- Include AngularJS from Google's CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+
+    <script src="js/papaparse.js"></script>
+    <script src="js/script.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+<div class="container" ng-app="mainApp" ng-controller="AppController">
+    <header>
+        <h1>Matching Tester</h1>
+    </header>
+    <nav>
+        <h2>Countries</h2>
+        <ul>
+            <li ng-repeat="country in countries">
+                <input type="checkbox" value="{{country.name}}" ng-model="country.selected">
+                <label>{{country.name}}</label>
+            </li>
+            <li>
+                <input type="checkbox" ng-click="toggleAll(countries, 0)" ng-model="isAllSelected[0]">
+                <label>ALL</label>
+            </li>
+        </ul>
+        <h2>Devices</h2>
+        <ul>
+            <li ng-repeat="device in devices">
+                <input type="checkbox" value="{{device.description}}" ng-model="device.selected">
+                <label>{{device.description}}</label>
+            </li>
+            <li>
+                <input type="checkbox" ng-click="toggleAll(devices, 1)" ng-model="isAllSelected[1]">
+                <label>ALL</label>
+            </li>
+        </ul>
+        <button ng-disabled="selectedCountries.length==0||selectedDevices.length==0" ng-click="search()">
+            Search
+        </button>
+    </nav>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Country</th>
+            <th>Number of Bugs</th>
+        </tr>
+        <tr ng-repeat="tester in selectedTesters">
+            <td>{{tester.firstName}} {{tester.lastName}}</td>
+            <td>{{tester.country}}</td>
+            <td>{{tester.bugs}}</td>
+        </tr>
+    </table>
+
+    <footer>Created by Yihao Zhou</footer>
+
+
+</div>
+</body>
+</html>
+
+
