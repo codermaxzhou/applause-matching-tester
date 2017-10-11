@@ -1,6 +1,5 @@
 var app = angular.module("mainApp", []);
-app.controller('AppController', ['$scope', 'filterFilter', function AppController($scope, filterFilter) {
-    $scope.testers = [];
+app.controller('AppController', ['$scope', function AppController($scope) {
     $scope.devices = [];
     $scope.countries = [];
     $scope.isAllSelected = [false, false];
@@ -13,7 +12,7 @@ app.controller('AppController', ['$scope', 'filterFilter', function AppControlle
     // watch devices for changes
     $scope.$watch('devices|filter:{selected:true}', function (nv) {
         $scope.selectedDevices = nv.map(function (device) {
-            return device.deviceId;
+            return device;
         });
         // console.log("selectedDevices: ", $scope.selectedDevices);
     }, true);
@@ -21,49 +20,52 @@ app.controller('AppController', ['$scope', 'filterFilter', function AppControlle
     // watch countries for changes
     $scope.$watch('countries|filter:{selected:true}', function (nv) {
         $scope.selectedCountries = nv.map(function (country) {
-            return country.name;
+            return country;
         });
         // console.log($scope.selectedCountries);
     }, true);
 
-    //initial
-    getCountries();
+    // initialize
+    getTesters();
     getDevices();
     getBugs();
 
-    function getCountries() {
-        // get all the testers from testers.csv file
+    // get all the testers from testers.csv file and eventually save them as the list into different countries
+    function getTesters() {
         Papa.parse("data/testers.csv", {
             download: true,
             header: true,
             dynamicTyping: true,
             complete: function (results) {
                 for (obj of results.data) {
-                    $scope.testers.push(obj);
+                    getCountries(obj);
                 }
-                console.log($scope.testers);
-                for (tester of $scope.testers) {
-                    exist = false;
-                    for (country of $scope.countries) {
-                        if (country.name === tester.country) {
-                            exist = true;
-                        }
-                    }
-                    if (!exist) {
-                        $scope.countries.push({
-                            name: tester.country,
-                            selected: false
-                        })
-                    }
-                }
-                console.log($scope.countries);
                 $scope.$apply();
             }
         })
     }
 
+    // get all the different countries from testers.csv and save into countries list
+    function getCountries(tester) {
+        exist = false;
+        for (country of $scope.countries) {
+            if (country.name === tester.country) {
+                exist = true;
+                country.testers.push(tester);
+                break;
+            }
+        }
+        if (!exist) {
+            $scope.countries.push({
+                name: tester.country,
+                selected: false,
+                testers: [tester]
+            })
+        }
+    }
+
+    // get all the devices from devices.csv and save into a devices list
     function getDevices() {
-        // get all the testers from testers.csv file
         Papa.parse("data/devices.csv", {
             download: true,
             header: true,
@@ -73,19 +75,20 @@ app.controller('AppController', ['$scope', 'filterFilter', function AppControlle
                     obj.selected = false;
                     $scope.devices.push(obj);
                 }
-                console.log($scope.devices);
+                // console.log($scope.devices);
                 $scope.$apply();
             }
         })
     }
 
-    // create a map, key is <testerId, deviceId>, value is number of bugs
+    // count number of bugs for each tester with different device from bugs.csv
     function getBugs() {
         Papa.parse("data/tester_device.csv", {
             download: true,
             header: true,
             dynamicTyping: true,
             complete: function (results) {
+                // create a map, key is <testerId, deviceId>, value is number of bugs
                 for (obj of results.data) {
                     key = obj.testerId + ',' + obj.deviceId;
                     map.set(key, 0)  // initial number of bugs is 0
@@ -101,11 +104,9 @@ app.controller('AppController', ['$scope', 'filterFilter', function AppControlle
                         for (obj of results.data) {
                             key = obj.testerId + ',' + obj.deviceId;
                             value = map.get(key) + 1;
-                            // console.log(map.get(key));
-                            map.set(key, value);
+                            map.set(key, value);    // update the value with a given key
                         }
-                        console.log(map);
-                        // getTesters();
+                        // console.log(map);
                     }
                 })
             }
@@ -120,29 +121,25 @@ app.controller('AppController', ['$scope', 'filterFilter', function AppControlle
 
     $scope.search = function() {
         $scope.selectedTesters = getSelectedTesters();
-        filter();
+        addBugs();
         sort(0, $scope.selectedTesters.length - 1);
-        console.log($scope.selectedTesters);
+        // console.log($scope.selectedTesters);
     }
     
     function getSelectedTesters() {
         var results = [];
-        for (tester of $scope.testers) {
-            for (country of $scope.selectedCountries) {
-                if (tester.country === country) {
-                    results.push(tester);
-                    break;
-                }
-            }
+        for (country of $scope.selectedCountries) {
+            results = results.concat(country.testers);
         }
+        // console.log(results);
         return results;
     }
 
-    function filter() {
+    function addBugs() {
         $scope.selectedTesters.forEach(function (tester) {
             var all = 0;
-            $scope.selectedDevices.forEach(function (deviceId) {
-                key = tester.testerId + ',' + deviceId;
+            $scope.selectedDevices.forEach(function (device) {
+                key = tester.testerId + ',' + device.deviceId;
                 value = map.get(key);
                 if (value !== undefined) {
                     all = all + value;
