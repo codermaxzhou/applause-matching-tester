@@ -14,7 +14,15 @@ app.controller('AppController', ['$scope', function AppController($scope) {
         $scope.selectedDevices = nv.map(function (device) {
             return device;
         });
-        // console.log("selectedDevices: ", $scope.selectedDevices);
+        // console.log("selectedDevices: ", $scope.selectedDevices.length);
+    }, true);
+
+    $scope.$watch('devices|filter:{selected:false}', function (nv) {
+        if (nv.length != 0) {
+            $scope.isAllSelected[1] = false;
+        } else {
+            $scope.isAllSelected[1] = true;
+        }
     }, true);
 
     // watch countries for changes
@@ -24,6 +32,15 @@ app.controller('AppController', ['$scope', function AppController($scope) {
         });
         // console.log($scope.selectedCountries);
     }, true);
+
+    $scope.$watch('countries|filter:{selected:false}', function (nv) {
+        if (nv.length != 0) {
+            $scope.isAllSelected[0] = false;
+        } else {
+            $scope.isAllSelected[0] = true;
+        }
+    }, true);
+
 
     // initialize
     getTesters();

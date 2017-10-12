@@ -48,6 +48,12 @@
         <button ng-disabled="selectedCountries.length==0||selectedDevices.length==0" ng-click="search()">
             Search
         </button>
+        <div class="notification">
+            <p ng-show="selectedCountries.length==0&&selectedDevices.length!=0">Please select one from the Countries!</p>
+            <p ng-show="selectedDevices.length==0&&selectedCountries.length!=0">Please select one from the Devices!</p>
+            <p ng-show="selectedDevices.length==0&&selectedCountries.length==0">Please select one from the Countries and the Devices!</p>
+        </div>
+
     </nav>
 
     <div style="overflow-x:auto;">
