@@ -54,7 +54,7 @@ app.controller('AppController', ['$scope', function AppController($scope) {
             header: true,
             dynamicTyping: true,
             complete: function (results) {
-                for (obj of results.data) {
+                for (var obj of results.data) {
                     getCountries(obj);
                 }
                 $scope.$apply();
@@ -64,8 +64,8 @@ app.controller('AppController', ['$scope', function AppController($scope) {
 
     // get all the different countries from testers.csv and save into countries list
     function getCountries(tester) {
-        exist = false;
-        for (country of $scope.countries) {
+        var exist = false;
+        for (var country of $scope.countries) {
             if (country.name === tester.country) {
                 exist = true;
                 country.testers.push(tester);
@@ -88,7 +88,7 @@ app.controller('AppController', ['$scope', function AppController($scope) {
             header: true,
             dynamicTyping: true,
             complete: function (results) {
-                for (obj of results.data) {
+                for (var obj of results.data) {
                     obj.selected = false;
                     $scope.devices.push(obj);
                 }
@@ -106,8 +106,8 @@ app.controller('AppController', ['$scope', function AppController($scope) {
             dynamicTyping: true,
             complete: function (results) {
                 // create a map, key is <testerId, deviceId>, value is number of bugs
-                for (obj of results.data) {
-                    key = obj.testerId + ',' + obj.deviceId;
+                for (var obj of results.data) {
+                    var key = obj.testerId + ',' + obj.deviceId;
                     map.set(key, 0)  // initial number of bugs is 0
                 }
                 // console.log(map.get('1,1'));
@@ -118,9 +118,9 @@ app.controller('AppController', ['$scope', function AppController($scope) {
                     header: true,
                     dynamicTyping: true,
                     complete: function (results) {
-                        for (obj of results.data) {
-                            key = obj.testerId + ',' + obj.deviceId;
-                            value = map.get(key) + 1;
+                        for ( var obj of results.data) {
+                            var key = obj.testerId + ',' + obj.deviceId;
+                            var value = map.get(key) + 1;
                             map.set(key, value);    // update the value with a given key
                         }
                         // console.log(map);
@@ -145,7 +145,7 @@ app.controller('AppController', ['$scope', function AppController($scope) {
     
     function getSelectedTesters() {
         var results = [];
-        for (country of $scope.selectedCountries) {
+        for (var country of $scope.selectedCountries) {
             results = results.concat(country.testers);
         }
         // console.log(results);
@@ -156,8 +156,8 @@ app.controller('AppController', ['$scope', function AppController($scope) {
         $scope.selectedTesters.forEach(function (tester) {
             var all = 0;
             $scope.selectedDevices.forEach(function (device) {
-                key = tester.testerId + ',' + device.deviceId;
-                value = map.get(key);
+                var key = tester.testerId + ',' + device.deviceId;
+                var value = map.get(key);
                 if (value !== undefined) {
                     all = all + value;
                 }
@@ -169,14 +169,14 @@ app.controller('AppController', ['$scope', function AppController($scope) {
 // use quicksort to sort the array by bugs number
     function sort(low, high) {
         if (low < high) {
-            pi = partition(low, high);
+            var pi = partition(low, high);
             sort(low, pi - 1);
             sort(pi + 1, high);
         }
     }
 
     function partition(low, high) {
-        pivot = $scope.selectedTesters[high].bugs;
+        var pivot = $scope.selectedTesters[high].bugs;
         var i = low - 1;
         for (var j = low; j < high; j++) {
             if ($scope.selectedTesters[j].bugs  > pivot) {
@@ -189,7 +189,7 @@ app.controller('AppController', ['$scope', function AppController($scope) {
     }
 
     function swap(a, b) {
-        temp = $scope.selectedTesters[a];
+        var temp = $scope.selectedTesters[a];
         $scope.selectedTesters[a] = $scope.selectedTesters[b];
         $scope.selectedTesters[b] = temp;
     }
