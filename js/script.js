@@ -137,8 +137,8 @@ app.controller('AppController', ['$scope', function AppController($scope) {
     }
 
     $scope.search = function() {
-        $scope.selectedTesters = getSelectedTesters();
-        addBugs();
+        var testers = getSelectedTesters();
+        $scope.selectedTesters = addBugs(testers);
         sort(0, $scope.selectedTesters.length - 1);
         // console.log($scope.selectedTesters);
     }
@@ -152,18 +152,25 @@ app.controller('AppController', ['$scope', function AppController($scope) {
         return results;
     }
 
-    function addBugs() {
-        $scope.selectedTesters.forEach(function (tester) {
+    function addBugs(testers) {
+        var results = [];
+        testers.forEach(function (tester) {
             var all = 0;
+            var flag = false;
             $scope.selectedDevices.forEach(function (device) {
                 var key = tester.testerId + ',' + device.deviceId;
                 var value = map.get(key);
                 if (value !== undefined) {
                     all = all + value;
+                    flag = true;
                 }
             });
             tester.bugs = all;
+            if (flag) {
+                results.push(tester);
+            }
         });
+        return results;
     }
 
 // use quicksort to sort the array by bugs number
